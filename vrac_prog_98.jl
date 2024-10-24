@@ -5,7 +5,7 @@ struct Carte
     function Carte(rang::Int64, couleur::Int64) 
         @assert(1 ≤ rang ≤ 13, "problème de rang")
         @assert(1 ≤ couleur ≤ 4, "problème de couleur")
-    new(rang, couleur)
+        new(rang, couleur)
     end 
 end
 # Créer une structure de carte renseignée par un couple d'entiers.
@@ -91,7 +91,7 @@ print("Nouvelle pile = ",pile)
 function Base.splice!(paquet::Paquet, index::Int64)
     splice!(paquet.cartes, index)
 end
-# Supprime la carte d'indice index du paquet.
+# Supprime la carte d'indice index du paquet et l'affiche.
 
 
         # Ajouter une carte :
@@ -137,41 +137,76 @@ joueur1.cartes[1]
 
 
 
-# /!\ PB /!\
-
-# Fonction splice! à revoir.
-
 # Actions sur le compteur :
-function jouer(compteur::Int64, carte::Carte, joueur::Paquet, defausse::Paquet, index::Int64)
+function jouer(compteur::Base.RefValue{Int64}, joueur::Paquet,  index::Int64, defausse::Paquet, pioche::Paquet)
+    carte = joueur.cartes[index]
     rg = carte.rang
     if 1 <= rg <= 10
-        compteur += rg
+        compteur[] += rg
     elseif rg == 11
-        compteur += 0
+        compteur[] += 0
     elseif rg == 12
-        compteur -= 10
+        compteur[] -= 10
     elseif rg == 13
-        compteur = 70
+        compteur[] = 70
     end
+    splice!(joueur, index)
+    push!(joueur, pop!(pioche))
     push!(defausse.cartes, carte)
-    splice!(joueur.cartes, index)
-    defausse
+    if compteur[]%10 == 0
+        print(Int(compteur[]/10), " GAGES !")
+        compteur[]
+    elseif compteur[] >= 98
+        "Perdu !"
+    else
+        compteur[]
+    end
 end
 
-paquet = Paquet52()
-joueur = Paquet(Carte[])
-joueur = distribution(paquet, joueur)
-compteur = 0
-defausse = Paquet(Carte[])
-compteur = jouer(compteur, joueur.cartes[5], joueur, defausse, 5)
-compteur
-joueur
-defausse
+# Test :
+pioche = shuffle!(Paquet52())
 
-
-paquet = Paquet52()
+joueur1 = distribution(pioche, Paquet(Carte[]))
+joueur2 = distribution(pioche, Paquet(Carte[]))
+joueur3 = distribution(pioche, Paquet(Carte[]))
+joueur4 = distribution(pioche, Paquet(Carte[]))
+compteur = Ref(0)
 defausse = Paquet(Carte[])
-push!(defausse.cartes, paquet.cartes[4])
-splice!(paquet.cartes, 4)
-defausse
-paquet
+
+jouer(compteur, joueur1, 1, defausse, pioche)
+joueur1
+
+jouer(compteur, joueur2, 2, defausse, pioche)
+joueur2
+
+jouer(compteur, joueur3, 2, defausse, pioche)
+
+# Lancement du jeu :
+function depart(n::Int64)
+    if n == 2
+        pioche = shuffle!(Paquet52())
+        joueur1 = distribution(pioche, Paquet(Carte[]))
+        joueur2 = distribution(pioche, Paquet(Carte[]))
+        compteur = 0
+        defausse = Paquet(Carte[])
+    elseif n == 3
+        pioche = shuffle!(Paquet52())
+        joueur1 = distribution(pioche, Paquet(Carte[]))
+        joueur2 = distribution(pioche, Paquet(Carte[]))
+        joueur3 = distribution(pioche, Paquet(Carte[]))
+        compteur = 0
+        defausse = Paquet(Carte[])
+    elseif n == 4
+        return(pioche = shuffle!(Paquet52()))
+        joueur1 = distribution(pioche, Paquet(Carte[]))
+        joueur2 = distribution(pioche, Paquet(Carte[]))
+        joueur3 = distribution(pioche, Paquet(Carte[]))
+        joueur4 = distribution(pioche, Paquet(Carte[]))
+        compteur = 0
+        defausse = Paquet(Carte[])
+    else
+        "Trop (ou pas assez) de joueurs : le jeu ne peut pas commencer." 
+    end
+end
+
+joueur1

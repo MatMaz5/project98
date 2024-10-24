@@ -28,7 +28,7 @@ function Base.push!(paquet::Paquet, carte::Carte)
 end
 
 
-# Mise en place du jeu (mains des joueurs et pioche) :
+# Création des mains des joueurs (et  de la pioche en conséquence) :
 function distribution(paquet::Paquet, joueur::Paquet)
     for i in 1:5
         joueur = push!(joueur, pop!(paquet))
@@ -38,7 +38,8 @@ end
 
 
 # Actions sur le compteur :
-function jouer(compteur, carte::Carte)
+function jouer(compteur::Int64, joueur::Paquet,  index::Int64, defausse::Paquet, pioche::Paquet)
+    carte = joueur.cartes[index]
     rg = carte.rang
     if 1 <= rg <= 10
         compteur += rg
@@ -48,5 +49,45 @@ function jouer(compteur, carte::Carte)
         compteur -= 10
     elseif rg == 13
         compteur = 70
+    end
+    splice!(joueur, index)
+    push!(joueur, pop!(pioche))
+    push!(defausse.cartes, carte)
+    if compteur%10 == 0
+        print(Int(compteur/10), " GAGES !")
+        compteur
+    elseif compteur >= 98
+        "perdu"
+    else
+        compteur
+    end
+end
+
+
+# Lancement du jeu :
+function depart(n::Int64)
+    if n == 2
+        pioche = shuffle!(Paquet52())
+        joueur1 = distribution(pioche, Paquet(Carte[]))
+        joueur2 = distribution(pioche, Paquet(Carte[]))
+        compteur = 0
+        defausse = Paquet(Carte[])
+    elseif n == 3
+        pioche = shuffle!(Paquet52())
+        joueur1 = distribution(pioche, Paquet(Carte[]))
+        joueur2 = distribution(pioche, Paquet(Carte[]))
+        joueur3 = distribution(pioche, Paquet(Carte[]))
+        compteur = 0
+        defausse = Paquet(Carte[])
+    elseif n == 4
+        pioche = shuffle!(Paquet52())
+        joueur1 = distribution(pioche, Paquet(Carte[]))
+        joueur2 = distribution(pioche, Paquet(Carte[]))
+        joueur3 = distribution(pioche, Paquet(Carte[]))
+        joueur4 = distribution(pioche, Paquet(Carte[]))
+        compteur = 0
+        defausse = Paquet(Carte[])
+    else
+        "Trop (ou pas assez) de joueurs : le jeu ne peut pas commencer." 
     end
 end

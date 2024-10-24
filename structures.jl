@@ -16,6 +16,7 @@ function Base.show(io::IO, carte::Carte)
    print(io, rangs[carte.rang], couleurs[carte.couleur])
 end
 
+
 # Paquet complet :
 struct Paquet 
     cartes :: Array{Carte, 1} 
