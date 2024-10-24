@@ -209,4 +209,4 @@ function depart(n::Int64)
     end
 end
 
-joueur1
+# Moyen cette fonction -> plutot créer un Struct pour le jeu dans son ensemble.
