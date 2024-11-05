@@ -1,7 +1,7 @@
 # Cartes d'un jeu de 52 basique :
-struct Carte 
+struct Carte
     rang :: Int64
-    couleur :: Int64 
+    couleur :: Int64
 end
 
 rangs = (:As, 2, 3, 4, 5, 6, 7, 8 , 9, 10, :V, :D, :R)

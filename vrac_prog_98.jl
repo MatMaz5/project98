@@ -4,9 +4,7 @@ struct Carte
     couleur :: Int64 
 end
 # Créer une structure de carte renseignée par un couple d'entiers.
-    # @assert : permet d'imposer une condition sur les valeurs prises par les arguments.
-    # new : créer la carte si les conditions sont remplies.
-    # Cette structure permet de classifier les cartes => pouvoir les comparer.
+
 
 rangs = (:As, 2, 3, 4, 5, 6, 7, 8 , 9, 10, :V, :D, :R)
 couleurs = (:♥, :♦, :♠, :♣)
@@ -26,7 +24,7 @@ typeof(Carte(12,1))
 
     ## Création du paquet de cartes :
 struct Paquet 
-    cartes :: Array{Carte, 1}
+    cartes :: Vector{Carte}
 end
 # Créer une structure pour le paquet de cartes.
 
@@ -175,19 +173,41 @@ jouer(compteur, joueur3, 2, defausse, pioche)
 struct Jeu98
     paquet :: Paquet
     defausse :: Paquet
+    joueur1 :: Paquet
+    joueur2 :: Paquet
+    joueur3 :: Paquet
+    compteur :: Base.RefValue{Int64}
 end
 
-function lancement(joueurs :: Int64)
-    if 2 <= joueurs <= 4
-        print("Lancement du jeu.")
-        pioche = shuffle!(Paquet52())
-        mains = Array{Paquet, joueurs}
-        for i in 1:joueurs
-            mains = distribution(paquet)
+function lancement()
+    print("Lancement du jeu.")
+    pioche = shuffle!(Paquet52())
+    defausse = Paquet(Carte[])
+    joueur1 = distribution(pioche)
+    joueur2 = distribution(pioche)
+    joueur3 = distribution(pioche)
+    compteur = Ref(0)
+    return Jeu98(pioche, defausse, joueur1, joueur2, joueur3, compteur)
+end
+
+jeu = lancement()
+jeu.joueur1
+
+
+function partie()
+    jeu = lancement()
+    while jeu.compteur[] < 98
+        print("Quelle carte voulez-vous jouer ?")
+        indice = readline()
+        # joueur1 joue
+        if jeu.compteur[] < 98
+            # joueur2 joue
+            if jeu.compteur[] < 98
+                # joueur3 jouer
+            end
         end
-    else
-        print("Nombre de joueurs incorrect.")
     end
+    print("Perdu !")
 end
 
-main = Array{Paquet, 3}
+# Fonction à finir
