@@ -2,11 +2,6 @@
 struct Carte 
     rang :: Int64
     couleur :: Int64 
-    function Carte(rang::Int64, couleur::Int64) 
-        @assert(1 ≤ rang ≤ 13, "problème de rang")
-        @assert(1 ≤ couleur ≤ 4, "problème de couleur")
-    new(rang, couleur)
-    end 
 end
 
 rangs = (:As, 2, 3, 4, 5, 6, 7, 8 , 9, 10, :V, :D, :R)

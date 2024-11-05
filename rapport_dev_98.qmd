@@ -9,17 +9,9 @@ format : html
 struct Carte 
     rang :: Int64
     couleur :: Int64 
-    function Carte(rang::Int64, couleur::Int64) 
-        @assert(1 ≤ rang ≤ 13, "problème de rang")
-        @assert(1 ≤ couleur ≤ 4, "problème de couleur")
-    new(rang, couleur)
-    end 
 end
 ```
-Créer une structure de carte renseignée par un couple d'entiers.  
-@assert : permet d'imposer une condition sur les valeurs prises par les arguments.  
-new : créer la carte si les conditions sont remplies.  
-Cette structure permet de classifier les  cartes => pouvoir les comparer.
+Créer une structure de carte renseignée par un couple d'entiers (permet de les comparer).
 \
 
 ```{julia}
@@ -149,7 +141,8 @@ La *carte* tirée a été remise à la fin de la *pile* (à la place où elle a 
 
 ## *5. Créer les mains des joueurs en début de partie*
 ```{julia}
-function distribution(paquet::Paquet, joueur::Paquet)
+function distribution(paquet::Paquet)
+    joueur = Paquet(Carte[])
     for i in 1:5
         joueur = push!(joueur, pop!(paquet))
     end
@@ -222,32 +215,5 @@ Enfin, elle permet aussi de signaler si des gages doivent être distibués ou no
 
 ## *6. Lancement du jeu*
 ```{julia}
-function depart(n::Int64)
-    if n == 2
-        pioche = shuffle!(Paquet52())
-        joueur1 = distribution(pioche, Paquet(Carte[]))
-        joueur2 = distribution(pioche, Paquet(Carte[]))
-        compteur = 0
-        defausse = Paquet(Carte[])
-    elseif n == 3
-        pioche = shuffle!(Paquet52())
-        joueur1 = distribution(pioche, Paquet(Carte[]))
-        joueur2 = distribution(pioche, Paquet(Carte[]))
-        joueur3 = distribution(pioche, Paquet(Carte[]))
-        compteur = 0
-        defausse = Paquet(Carte[])
-    elseif n == 4
-        pioche = shuffle!(Paquet52())
-        joueur1 = distribution(pioche, Paquet(Carte[]))
-        joueur2 = distribution(pioche, Paquet(Carte[]))
-        joueur3 = distribution(pioche, Paquet(Carte[]))
-        joueur4 = distribution(pioche, Paquet(Carte[]))
-        compteur = 0
-        defausse = Paquet(Carte[])
-    else
-        "Trop (ou pas assez) de joueurs : le jeu ne peut pas commencer." 
-    end
-end
+
 ```
-Cette fonction prend en argument le nombre de joueurs souhaité et crée ou non une partie si le nombre de joueurs est correct. \
-\

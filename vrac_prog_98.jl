@@ -2,11 +2,6 @@
 struct Carte 
     rang :: Int64
     couleur :: Int64 
-    function Carte(rang::Int64, couleur::Int64) 
-        @assert(1 ≤ rang ≤ 13, "problème de rang")
-        @assert(1 ≤ couleur ≤ 4, "problème de couleur")
-        new(rang, couleur)
-    end 
 end
 # Créer une structure de carte renseignée par un couple d'entiers.
     # @assert : permet d'imposer une condition sur les valeurs prises par les arguments.
@@ -31,7 +26,7 @@ typeof(Carte(12,1))
 
     ## Création du paquet de cartes :
 struct Paquet 
-    cartes :: Array{Carte, 1} 
+    cartes :: Array{Carte, 1}
 end
 # Créer une structure pour le paquet de cartes.
 
@@ -107,7 +102,8 @@ print("Recomposition = ", recomp)
 
 
         # Créer les mains des joueurs en début de partie :
-function distribution(paquet::Paquet, joueur::Paquet)
+function distribution(paquet::Paquet)
+    joueur = Paquet(Carte[])
     for i in 1:5
         joueur = push!(joueur, pop!(paquet))
     end
@@ -115,21 +111,14 @@ function distribution(paquet::Paquet, joueur::Paquet)
 end
 # La fonction transfert 5 cartes d'un "paquet" à un "joueur" et retourne la main du joueur.
 # A la fin de la fonction, les 5 dernières cartes du "paquet" n'apparaissent donc plus (puisqu'elles sont dans la main du joueur).
-# Le reste du "paquet sert alors de pioche.
+# Le reste du "paquet" sert alors de pioche.
 
 paquet = shuffle!(Paquet52())
 length(paquet.cartes)
-joueur1 = Paquet(Carte[])
-joueur2 = Paquet(Carte[])
-joueur3 = Paquet(Carte[])
-joueur4 = Paquet(Carte[])
-# print("Paquet = ", paquet)
-joueur1 = distribution(paquet, joueur1)
-# print("Paquet = ", paquet)
-joueur2 = distribution(paquet, joueur2)
-# print("Paquet = ", paquet)
-joueur3 = distribution(paquet, joueur3)
-joueur4 = distribution(paquet, joueur4)
+joueur1 = distribution(paquet)
+joueur2 = distribution(paquet)
+joueur3 = distribution(paquet)
+joueur4 = distribution(paquet)
 length(paquet.cartes)
 
 joueur1.cartes[1]
@@ -166,10 +155,10 @@ end
 # Test :
 pioche = shuffle!(Paquet52())
 
-joueur1 = distribution(pioche, Paquet(Carte[]))
-joueur2 = distribution(pioche, Paquet(Carte[]))
-joueur3 = distribution(pioche, Paquet(Carte[]))
-joueur4 = distribution(pioche, Paquet(Carte[]))
+joueur1 = distribution(paquet)
+joueur2 = distribution(paquet)
+joueur3 = distribution(paquet)
+joueur4 = distribution(paquet)
 compteur = Ref(0)
 defausse = Paquet(Carte[])
 
@@ -181,32 +170,24 @@ joueur2
 
 jouer(compteur, joueur3, 2, defausse, pioche)
 
+
 # Lancement du jeu :
-function depart(n::Int64)
-    if n == 2
+struct Jeu98
+    paquet :: Paquet
+    defausse :: Paquet
+end
+
+function lancement(joueurs :: Int64)
+    if 2 <= joueurs <= 4
+        print("Lancement du jeu.")
         pioche = shuffle!(Paquet52())
-        joueur1 = distribution(pioche, Paquet(Carte[]))
-        joueur2 = distribution(pioche, Paquet(Carte[]))
-        compteur = 0
-        defausse = Paquet(Carte[])
-    elseif n == 3
-        pioche = shuffle!(Paquet52())
-        joueur1 = distribution(pioche, Paquet(Carte[]))
-        joueur2 = distribution(pioche, Paquet(Carte[]))
-        joueur3 = distribution(pioche, Paquet(Carte[]))
-        compteur = 0
-        defausse = Paquet(Carte[])
-    elseif n == 4
-        return(pioche = shuffle!(Paquet52()))
-        joueur1 = distribution(pioche, Paquet(Carte[]))
-        joueur2 = distribution(pioche, Paquet(Carte[]))
-        joueur3 = distribution(pioche, Paquet(Carte[]))
-        joueur4 = distribution(pioche, Paquet(Carte[]))
-        compteur = 0
-        defausse = Paquet(Carte[])
+        mains = Array{Paquet, joueurs}
+        for i in 1:joueurs
+            mains = distribution(paquet)
+        end
     else
-        "Trop (ou pas assez) de joueurs : le jeu ne peut pas commencer." 
+        print("Nombre de joueurs incorrect.")
     end
 end
 
-# Moyen cette fonction -> plutot créer un Struct pour le jeu dans son ensemble.
+main = Array{Paquet, 3}
