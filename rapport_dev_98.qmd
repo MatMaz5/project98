@@ -12,6 +12,7 @@ struct Carte
     couleur :: Int64 
 end
 ```
+
 Créer une structure de carte renseignée par un couple d'entiers (permet de les comparer).
 \
 
@@ -162,10 +163,10 @@ joueur1 = Paquet(Carte[])
 joueur2 = Paquet(Carte[])
 joueur3 = Paquet(Carte[])
 joueur4 = Paquet(Carte[])
-joueur1 = distribution(paquet, joueur1)
-joueur2 = distribution(paquet, joueur2)
-joueur3 = distribution(paquet, joueur3)
-joueur4 = distribution(paquet, joueur4)
+joueur1 = distribution(paquet)
+joueur2 = distribution(paquet)
+joueur3 = distribution(paquet)
+joueur4 = distribution(paquet)
 length(paquet.cartes)
 ```
 Les *joueurs* sont créés au préalable afin d'obtenir des *paquets* vides et de pouvoir ainsi les remplir de *cartes*.
@@ -182,7 +183,7 @@ joueur1.cartes[1]
 
 ## *5. Actions des cartes sur le compteur*
 ```{julia}
-function jouer(compteur::Int64, joueur::Paquet,  index::Int64, defausse::Paquet, pioche::Paquet)
+function jouer_br(compteur::Int64, joueur::Paquet,  index::Int64, defausse::Paquet, pioche::Paquet)
     carte = joueur.cartes[index]
     rg = carte.rang
     if 1 <= rg <= 10

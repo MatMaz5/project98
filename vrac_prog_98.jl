@@ -107,7 +107,8 @@ function distribution(paquet::Paquet)
     end
     joueur
 end
-# La fonction transfert 5 cartes d'un "paquet" à un "joueur" et retourne la main du joueur.
+# La fonction créer un "joueur" et lui transfert 5 cartes d'un "paquet".
+# Elle retourne ensuite la main du joueur -> pb pour après : tt le monde voit toutes les mains des joueurs.
 # A la fin de la fonction, les 5 dernières cartes du "paquet" n'apparaissent donc plus (puisqu'elles sont dans la main du joueur).
 # Le reste du "paquet" sert alors de pioche.
 
@@ -124,8 +125,41 @@ joueur1.cartes[1]
 
 
 
+#############################################################################################################
+#######################################  TOUT REVOIR À PARTIR D'ICI.  #######################################
+#############################################################################################################
+
+
+
 # Actions sur le compteur :
-function jouer(compteur::Base.RefValue{Int64}, joueur::Paquet,  index::Int64, defausse::Paquet, pioche::Paquet)
+function jouer_br(compteur::Int64, joueur::Paquet,  index::Int64, defausse::Paquet, pioche::Paquet)
+    carte = joueur.cartes[index]
+    rg = carte.rang
+    if 1 <= rg <= 10
+        compteur += rg
+    elseif rg == 11
+        compteur += 0
+    elseif rg == 12
+        compteur -= 10
+    elseif rg == 13
+        compteur = 70
+    end
+    splice!(joueur, index)
+    push!(joueur, pop!(pioche))
+    push!(defausse.cartes, carte)
+    if compteur%10 == 0
+        print(Int(compteur/10), " GAGES !")
+        compteur
+    elseif compteur >= 98
+        "perdu"
+    else
+        compteur
+    end
+end
+# Pb : le compteur ne change pas : un Int64 est immuable -> Base.RefValue{Int64} pour avoir un nombre variable.
+# Trop complexe : il faut la remanier pour la réduire, grâce àdes "sous-fonctions" :
+
+function effet_cartes(compteur::Base.RefValue{Int64}, joueur::Paquet,  index::Int64)
     carte = joueur.cartes[index]
     rg = carte.rang
     if 1 <= rg <= 10
@@ -137,9 +171,9 @@ function jouer(compteur::Base.RefValue{Int64}, joueur::Paquet,  index::Int64, de
     elseif rg == 13
         compteur[] = 70
     end
-    splice!(joueur, index)
-    push!(joueur, pop!(pioche))
-    push!(defausse.cartes, carte)
+end
+
+function etat_compteur(compteur::Base.RefValue{Int64})
     if compteur[]%10 == 0
         print(Int(compteur[]/10), " GAGES !")
         compteur[]
@@ -150,23 +184,14 @@ function jouer(compteur::Base.RefValue{Int64}, joueur::Paquet,  index::Int64, de
     end
 end
 
-# Test :
-pioche = shuffle!(Paquet52())
+function jouer(compteur::Base.RefValue{Int64}, joueur::Paquet,  index::Int64, defausse::Paquet, pioche::Paquet)
+    effet_cartes(compteur, joueur,  index)
+    splice!(joueur, index)
+    push!(joueur, pop!(pioche))
+    push!(defausse.cartes, carte)
+    etat_compteur(compteur)
+end
 
-joueur1 = distribution(paquet)
-joueur2 = distribution(paquet)
-joueur3 = distribution(paquet)
-joueur4 = distribution(paquet)
-compteur = Ref(0)
-defausse = Paquet(Carte[])
-
-jouer(compteur, joueur1, 1, defausse, pioche)
-joueur1
-
-jouer(compteur, joueur2, 2, defausse, pioche)
-joueur2
-
-jouer(compteur, joueur3, 2, defausse, pioche)
 
 
 # Lancement du jeu :
@@ -178,6 +203,11 @@ struct Jeu98
     joueur3 :: Paquet
     compteur :: Base.RefValue{Int64}
 end
+
+# "struct" : pas bien designé -> nombre de joueurs fixe et pas appelable avec des indices.
+# Plutôt utiliser un "Dict".
+
+
 
 function mise_en_place()
     print("Mise en place du jeu.")
@@ -196,6 +226,7 @@ jeu.joueur1
 
 function partie()
     jeu = mise_en_place()
+    valeur_compteur(compteur)
     while jeu.compteur[] < 98
         print("Quelle carte voulez-vous jouer ?")
         indice = readline()
@@ -211,3 +242,6 @@ function partie()
 end
 
 # Fonction à finir
+
+
+
