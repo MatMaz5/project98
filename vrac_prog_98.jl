@@ -179,8 +179,8 @@ struct Jeu98
     compteur :: Base.RefValue{Int64}
 end
 
-function lancement()
-    print("Lancement du jeu.")
+function mise_en_place()
+    print("Mise en place du jeu.")
     pioche = shuffle!(Paquet52())
     defausse = Paquet(Carte[])
     joueur1 = distribution(pioche)
@@ -190,12 +190,12 @@ function lancement()
     return Jeu98(pioche, defausse, joueur1, joueur2, joueur3, compteur)
 end
 
-jeu = lancement()
+jeu = mise_en_place()
 jeu.joueur1
 
 
 function partie()
-    jeu = lancement()
+    jeu = mise_en_place()
     while jeu.compteur[] < 98
         print("Quelle carte voulez-vous jouer ?")
         indice = readline()
