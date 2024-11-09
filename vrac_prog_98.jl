@@ -1,4 +1,8 @@
-    ## Création des cartes :
+using Random
+using JLD
+
+   
+   ## Création des cartes :
 struct Carte 
     rang :: Int64
     couleur :: Int64 
@@ -17,9 +21,6 @@ end
 # io (dans print) : associer le show et le print.
 # Cette fonction permet d'associer la structure de la carte à sa "vraie" valeur.
 
-# Test :
-Carte(12,1)
-typeof(Carte(12,1))
 
 
     ## Création du paquet de cartes :
@@ -51,33 +52,22 @@ function Base.show(io::IO, paquet::Paquet)
 end
 # Cette fonction permet de créer un affichage pour les cartes de la liste stocker dans le Paquet.
 
-Paquet52()
-# Le paquet est maintenant composé de cartes séparées.
-
 
 
     ## Effets sur le paquet :
         # Mélanger le paquet :
-using Random
 function Random.shuffle!(paquet::Paquet)
     shuffle!(paquet.cartes)
     paquet
 end
 # Importe et formate la fonction "shuffle!" pour l'adapter au paquet.
 
-pile = shuffle!(Paquet52())
-# Créer la pile de cartes mélangées.
-print("Pile = ", pile)
-
 
         # Sortir une carte :
 function Base.pop!(paquet::Paquet) 
     pop!(paquet.cartes)
 end
-tirage = pop!(pile)
-# Retire la dernière carte de la pile et l'affiche.
-print("Tirage = ", tirage)
-print("Nouvelle pile = ",pile)
+
 
 
         # Supprimer une carte :
@@ -94,10 +84,6 @@ function Base.push!(paquet::Paquet, carte::Carte)
 end
 # Rajoute une carte à la fin de paquet sélectionné.
 
-recomp = push!(pile, tirage)
-print("Recomposition = ", recomp)
-# La carte tirée a été remise à la fin du paquet (à la place où elle a été tiré).
-
 
         # Créer les mains des joueurs en début de partie :
 function distribution(paquet::Paquet)
@@ -112,17 +98,6 @@ end
 # A la fin de la fonction, les 5 dernières cartes du "paquet" n'apparaissent donc plus (puisqu'elles sont dans la main du joueur).
 # Le reste du "paquet" sert alors de pioche.
 
-paquet = shuffle!(Paquet52())
-length(paquet.cartes)
-joueur1 = distribution(paquet)
-joueur2 = distribution(paquet)
-joueur3 = distribution(paquet)
-joueur4 = distribution(paquet)
-length(paquet.cartes)
-
-joueur1.cartes[1]
-# Permet d'appeler la première carte du joueur1.
-
 
 
 #############################################################################################################
@@ -131,7 +106,7 @@ joueur1.cartes[1]
 
 
 
-# Actions sur le compteur :
+    # Actions sur le compteur :
 function jouer_br(compteur::Int64, joueur::Paquet,  index::Int64, defausse::Paquet, pioche::Paquet)
     carte = joueur.cartes[index]
     rg = carte.rang
@@ -157,40 +132,7 @@ function jouer_br(compteur::Int64, joueur::Paquet,  index::Int64, defausse::Paqu
     end
 end
 # Pb : le compteur ne change pas : un Int64 est immuable -> Base.RefValue{Int64} pour avoir un nombre variable.
-# Trop complexe : il faut la remanier pour la réduire, grâce àdes "sous-fonctions" :
-
-function effet_cartes(compteur::Base.RefValue{Int64}, joueur::Paquet,  index::Int64)
-    carte = joueur.cartes[index]
-    rg = carte.rang
-    if 1 <= rg <= 10
-        compteur[] += rg
-    elseif rg == 11
-        compteur[] += 0
-    elseif rg == 12
-        compteur[] -= 10
-    elseif rg == 13
-        compteur[] = 70
-    end
-end
-
-function etat_compteur(compteur::Base.RefValue{Int64})
-    if compteur[]%10 == 0
-        print(Int(compteur[]/10), " GAGES !")
-        compteur[]
-    elseif compteur[] >= 98
-        "Perdu !"
-    else
-        compteur[]
-    end
-end
-
-function jouer(compteur::Base.RefValue{Int64}, joueur::Paquet,  index::Int64, defausse::Paquet, pioche::Paquet)
-    effet_cartes(compteur, joueur,  index)
-    splice!(joueur, index)
-    push!(joueur, pop!(pioche))
-    push!(defausse.cartes, carte)
-    etat_compteur(compteur)
-end
+# Trop complexe : il faut la remanier pour la réduire, grâce à des "sous-fonctions".
 
 
 
@@ -207,9 +149,7 @@ end
 # "struct" : pas bien designé -> nombre de joueurs fixe et pas appelable avec des indices.
 # Plutôt utiliser un "Dict".
 
-
-
-function mise_en_place()
+function mise_en_place_br()
     print("Mise en place du jeu.")
     pioche = shuffle!(Paquet52())
     defausse = Paquet(Carte[])
@@ -220,12 +160,10 @@ function mise_en_place()
     return Jeu98(pioche, defausse, joueur1, joueur2, joueur3, compteur)
 end
 
-jeu = mise_en_place()
-jeu.joueur1
 
-
-function partie()
-    jeu = mise_en_place()
+function partie_br()
+    c = 4
+    jeu = mise_en_place(c)
     valeur_compteur(compteur)
     while jeu.compteur[] < 98
         print("Quelle carte voulez-vous jouer ?")
@@ -245,3 +183,99 @@ end
 
 
 
+########################################################################################################
+#######################################  - RÉVISION DE LA FIN -  #######################################
+########################################################################################################
+
+
+
+function effet_cartes(compteur::Base.RefValue{Int64}, joueur::Paquet,  index::Int64)
+    carte = joueur.cartes[index]
+    rg = carte.rang
+    if 1 <= rg <= 10
+        compteur[] += rg
+    elseif rg == 11
+        compteur[] += 0
+    elseif rg == 12
+        compteur[] -= 10
+    elseif rg == 13
+        compteur[] = 70
+    end
+end
+
+function etat_compteur(compteur::Base.RefValue{Int64})
+    if compteur[]%10 == 0
+        println(Int(compteur[]/10), " GAGES ! ", )
+        println("Compteur = ", compteur[])
+    elseif compteur[] >= 98
+        println("Perdu !")
+    else
+        println("Compteur = ", compteur[])
+    end
+
+end
+
+
+function jouer(compteur::Base.RefValue{Int64}, joueur::Paquet,  index::Int64, defausse::Paquet, pioche::Paquet)
+    effet_cartes(compteur, joueur, index)
+    splice!(joueur, index)
+    push!(joueur, pop!(pioche))
+    push!(defausse.cartes, joueur.cartes[index])
+    etat_compteur(compteur)
+end
+
+function mise_en_place(nb_jr)
+    Jeu_98 = Dict()
+    Jeu_98["pioche"] = shuffle!(Paquet52())
+    Jeu_98["defausse"] = Paquet(Carte[])
+    Jeu_98["compteur"] = Ref(0)
+    if 2 <= nb_jr <= 5
+        for i in 1:nb_jr
+            Jeu_98[i] = distribution(Jeu_98["pioche"])
+        end
+        println("Nombre de joueurs correct. Lancement du jeu.")
+    else
+        println("Nombre de joueurs incorrect. Veuillez changez.")
+        nb_jr = parse(Int64,readline())
+    end
+    Jeu_98
+end
+# Créer la structure du jeu avec une pioche, une défausse, un compteur et des mains de joueurs.
+
+function bon_joueur()
+    press = readline()
+    while press != "O"
+        println("Essayez de nouveau.")
+        press = readline()
+    end
+end
+
+function partie98()
+    println("Mise en place du jeu : combien de joueurs ?")
+    nb_jr = parse(Int64,readline())
+    Jeu_98 = mise_en_place(nb_jr)
+    while Jeu_98["compteur"][] < 98 
+        for i in 1:nb_jr
+            println("Joueur ", i, " joue ? Taper O si oui.")
+            bon_joueur()
+            println("Quelle carte voulez-vous jouer ? Entrer son emplacement (1 à 5).")
+            println(Jeu_98[i])
+            index = parse(Int64,readline())
+            print("\e[2J") # effacer ce qui précède -> pas de triche
+            jouer(Jeu_98["compteur"], Jeu_98[i], index, Jeu_98["defausse"], Jeu_98["pioche"])
+            if Jeu_98["compteur"][] >= 98 break end
+            
+            ## Pas sûr que cette partie marche
+            if Jeu_98["pioche"] == ""
+                Jeu_98["pioche"] = shuffle!(Jeu_98["defausse"])
+                Jeu_98["defausse"] = Paquet(Carte[])   
+            end
+            ##
+            
+        end
+    end
+    println("Fin du jeu.")
+end
+
+
+# Jeu fini !!! (en terminal)
