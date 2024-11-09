@@ -12,7 +12,7 @@ function Base.show(io::IO, carte::Carte)
 end
 
 
-# Paquet complet :
+# Paquet de 52 cartes complet :
 struct Paquet 
     cartes :: Array{Carte, 1} 
 end
