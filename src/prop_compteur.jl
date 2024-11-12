@@ -20,7 +20,7 @@ end
 # "État" du compteur :
 function etat_compteur(compteur::Base.RefValue{Int64})
     if compteur[]%10 == 0
-        println(Int(compteur[]/10), " GAGES ! ", )
+        println(Int(compteur[]/10), " gages à donnés ! ", )
         println("Compteur = ", compteur[])
     elseif compteur[] >= 98
         println("Perdu !")
