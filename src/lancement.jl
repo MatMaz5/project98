@@ -6,7 +6,7 @@ function partie98()
     println("Mise en place du jeu : combien de joueurs ?")
     nb_jr = parse(Int64,readline())
     Jeu_98 = mise_en_place(nb_jr)
-    while Jeu_98["compteur"][] < 98 
+    while Jeu_98["compteur"][] < 98
         for i in 1:nb_jr
             println("Joueur ", i, " joue ? Taper O si oui.")
             bon_joueur()
