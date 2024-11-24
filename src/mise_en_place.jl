@@ -1,4 +1,5 @@
 include("mvt_cartes.jl")
+include("tests_anti_erreurs.jl")
 
 # using Random
 # using JLD
@@ -20,23 +21,14 @@ function mise_en_place(nb_jr)
     Jeu_98["pioche"] = shuffle!(Paquet52())
     Jeu_98["defausse"] = Paquet(Carte[])
     Jeu_98["compteur"] = Ref(0)
-    while nb_jr < 2 || nb_jr > 5
+    if 2 <= nb_jr <= 5
+        for i in 1:nb_jr
+            Jeu_98[i] = distribution(Jeu_98["pioche"])
+        end
+        println("Nombre de joueurs correct. Lancement du jeu.")
+    else
         println("Nombre de joueurs incorrect. Veuillez changez.")
-        nb_jr = parse(Int64,readline())
+        nb_jr = nombre()
     end
-    for i in 1:nb_jr
-        Jeu_98[i] = distribution(Jeu_98["pioche"])
-    end
-    println("Nombre de joueurs correct. Lancement du jeu.")
     Jeu_98
-end
-
-
-# Vérifier si le bon joueur est prêt à jouer :
-function bon_joueur()
-    press = readline()
-    while press != "O"
-        println("Essayez de nouveau.")
-        press = readline()
-    end
 end
