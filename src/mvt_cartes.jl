@@ -1,13 +1,8 @@
-# include("structs.jl") -> déjà dans prop_compteur.jl donc pas besoin de la rappeler ?
 include("prop_compteur.jl")
 
-export Pkg
-using Pkg
-Pkg.add("Random")
-Pkg.add("JLD")
 
-using Random
-using JLD
+import Random
+import JLD
 
 
 # Mélanger le paquet :

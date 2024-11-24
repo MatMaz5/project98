@@ -1,11 +1,32 @@
 ---
-title : "Création/mise en place du 98"
-engine : julia
+title : "Rapport - Développement du *98*"
 author : "Matthias MAZET"
-format : html
+engine : julia
+format : 
+    html:
+        toc: true
+        toc-title: table des matières
+        number-sections: true
+        theme: minty
 ---
 
-# *I. Création des cartes*
+::: {.panel-tabset}
+
+
+# Règles du jeu
+
+***But du jeu***
+
+
+***Mise en place***
+
+
+***Règles***
+
+
+# Descprition du code
+
+## *I. Création des cartes*
 ```{julia}
 struct Carte 
     rang :: Int64
@@ -40,7 +61,7 @@ typeof(Carte(12,1))
 
 {{< pagebreak >}}
 
-# *II. Création du paquet de cartes*
+## *II. Création du paquet de cartes*
 ```{julia}
 struct Paquet 
     cartes :: Array{Carte, 1} 
@@ -80,8 +101,8 @@ Le *paquet* s'affiche donc maintenant comme des *cartes* séparées.
 
 {{< pagebreak >}}
 
-# *III. Effets sur le paquet*
-## *1. Mélanger le paquet*
+## *III. Effets sur le paquet*
+### *1. Mélanger le paquet*
 ```{julia}
 using Random
 function Random.shuffle!(paquet::Paquet)
@@ -101,7 +122,7 @@ pile = shuffle!(Paquet52())
 La *pile* correspond au *paquet* mélangé.
 \ 
 
-## *2. Sortir une carte*
+### *2. Sortir une carte*
 ```{julia}
 function Base.pop!(paquet::Paquet) 
     pop!(paquet.cartes)
@@ -111,7 +132,7 @@ Importe et formate la fonction "pop!" pour l'adapter à la structure "Paquet".
 Cette fonction permet de retirer la dernière carte du *paquet* et de la stocker.  
 \ 
 
-## *3. Supprimer une carte à un endroit donné*
+### *3. Supprimer une carte à un endroit donné*
 ```{julia}
 function Base.splice!(paquet::Paquet, index::Int64)
     splice!(paquet.cartes, index)
@@ -121,7 +142,7 @@ Importe et formate la fonction "splice!" pour l'adapter à la structure "Paquet"
 Cette fonction permet de supprimer la carte à la place *index* du *paquet*.
 \
 
-## *4. Ajouter une carte*
+### *4. Ajouter une carte*
 ```{julia}
 function Base.push!(paquet::Paquet, carte::Carte) 
     push!(paquet.cartes, carte)
@@ -141,7 +162,7 @@ La *carte* tirée a été remise à la fin de la *pile* (à la place où elle a 
 \ 
 
 
-## *5. Créer les mains des joueurs en début de partie*
+### *5. Créer les mains des joueurs en début de partie*
 ```{julia}
 function distribution(paquet::Paquet)
     joueur = Paquet(Carte[])
@@ -181,7 +202,7 @@ joueur1.cartes[1]
 \
 
 
-## *5. Actions des cartes sur le compteur*
+### *6. Actions des cartes sur le compteur*
 ```{julia}
 function jouer_br(compteur::Int64, joueur::Paquet,  index::Int64, defausse::Paquet, pioche::Paquet)
     carte = joueur.cartes[index]
@@ -215,7 +236,8 @@ Enfin, elle permet aussi de signaler si des gages doivent être distibués ou no
 \
 
 
-## *6. Lancement du jeu*
-```{julia}
+### *7. Lancement du jeu*
 
-```
+
+
+:::

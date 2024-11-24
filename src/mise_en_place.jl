@@ -1,9 +1,6 @@
 include("mvt_cartes.jl")
 include("tests_anti_erreurs.jl")
 
-# using Random
-# using JLD
-# /-> Déjà dans mvt_cartes.jl donc pas besoin de les rappeler ?
 
 # Création des mains des joueurs (et de la pioche par extension) :
 function distribution(paquet::Paquet)

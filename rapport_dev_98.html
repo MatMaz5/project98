@@ -8,7 +8,7 @@
 
 <meta name="author" content="Matthias MAZET">
 
-<title>Création/mise en place du 98</title>
+<title>Rapport - Développement du 98</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -67,7 +67,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="rapport_dev_98_files/libs/quarto-html/quarto-syntax-highlighting-2486e1f0a3ee9ee1fc393803a1361cdb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="rapport_dev_98_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="rapport_dev_98_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="rapport_dev_98_files/libs/bootstrap/bootstrap-677b520d69fcc55ab41b4b425631e74d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="rapport_dev_98_files/libs/bootstrap/bootstrap-d911cfbe176f16a89c34c111de48b2f9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -101,15 +101,17 @@ window.Quarto = {
 
 </head>
 
-<body class="fullcontent">
+<body>
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+  
+</div>
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Création/mise en place du 98</h1>
+<h1 class="title">Rapport - Développement du <em>98</em></h1>
 </div>
 
 
@@ -132,8 +134,17 @@ window.Quarto = {
 </header>
 
 
-<section id="i.-création-des-cartes" class="level1">
-<h1><em>I. Création des cartes</em></h1>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Règles du jeu</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Descprition du code</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<p><strong><em>But du jeu</em></strong></p>
+<p><strong><em>Mise en place</em></strong></p>
+<p><strong><em>Règles</em></strong></p>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<section id="i.-création-des-cartes" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="i.-création-des-cartes"><span class="header-section-number">1</span> <em>I. Création des cartes</em></h2>
 <div id="2" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Carte </span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    rang <span class="op">::</span><span class="dt"> Int64</span></span>
@@ -166,8 +177,8 @@ Cette fonction permet d’associer la structure de la carte à sa “vraie” va
 </div>
 <div style="page-break-after: always;"></div>
 </section>
-<section id="ii.-création-du-paquet-de-cartes" class="level1">
-<h1><em>II. Création du paquet de cartes</em></h1>
+<section id="ii.-création-du-paquet-de-cartes" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="ii.-création-du-paquet-de-cartes"><span class="header-section-number">2</span> <em>II. Création du paquet de cartes</em></h2>
 <div id="8" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Paquet </span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    cartes <span class="op">::</span><span class="dt"> Array{Carte, 1} </span></span>
@@ -207,10 +218,10 @@ Cette fonction permet d’associer la structure de la carte à sa “vraie” va
 Le <em>paquet</em> s’affiche donc maintenant comme des <em>cartes</em> séparées. &nbsp;</p>
 <div style="page-break-after: always;"></div>
 </section>
-<section id="iii.-effets-sur-le-paquet" class="level1">
-<h1><em>III. Effets sur le paquet</em></h1>
-<section id="mélanger-le-paquet" class="level2">
-<h2 class="anchored" data-anchor-id="mélanger-le-paquet"><em>1. Mélanger le paquet</em></h2>
+<section id="iii.-effets-sur-le-paquet" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="iii.-effets-sur-le-paquet"><span class="header-section-number">3</span> <em>III. Effets sur le paquet</em></h2>
+<section id="mélanger-le-paquet" class="level3" data-number="3.1">
+<h3 data-number="3.1" class="anchored" data-anchor-id="mélanger-le-paquet"><span class="header-section-number">3.1</span> <em>1. Mélanger le paquet</em></h3>
 <div id="14" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Random</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="bu">Random</span>.<span class="fu">shuffle!</span>(paquet<span class="op">::</span><span class="dt">Paquet</span>)</span>
@@ -226,13 +237,13 @@ Cette fonction permet ainsi de mélanger un <em>paquet</em> de carte.<br>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>paquet <span class="op">=</span> <span class="fu">Paquet52</span>()</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>pile <span class="op">=</span> <span class="fu">shuffle!</span>(<span class="fu">Paquet52</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="1">
-<pre><code>10♦ D♥ As♦ 3♠ 2♥ 6♠ 5♦ V♠ 7♠ 6♥ 10♠ 7♦ 9♦ 7♣ 4♦ 2♠ As♠ 3♣ 4♠ 10♥ V♥ R♥ 2♣ R♠ 4♣ D♠ V♣ 5♣ 9♣ 8♠ 7♥ 8♥ 9♥ V♦ R♦ 4♥ 3♥ 6♦ 10♣ R♣ 8♦ D♣ 2♦ 5♠ As♣ 8♣ As♥ 6♣ 3♦ D♦ 9♠ 5♥ </code></pre>
+<pre><code>7♦ 7♣ R♠ 10♦ As♠ 6♦ 8♣ 10♥ 4♣ V♣ As♦ D♦ 5♠ D♠ 7♥ 6♥ 5♦ 2♠ 7♠ V♥ V♦ D♣ R♦ As♣ 3♣ 2♦ 2♣ 9♣ R♥ 5♥ 3♥ 10♠ 6♠ R♣ 4♠ D♥ As♥ 9♥ 4♥ 10♣ 3♦ 9♦ 8♥ 2♥ V♠ 8♠ 9♠ 4♦ 5♣ 8♦ 6♣ 3♠ </code></pre>
 </div>
 </div>
 <p>La <em>pile</em> correspond au <em>paquet</em> mélangé. &nbsp;</p>
 </section>
-<section id="sortir-une-carte" class="level2">
-<h2 class="anchored" data-anchor-id="sortir-une-carte"><em>2. Sortir une carte</em></h2>
+<section id="sortir-une-carte" class="level3" data-number="3.2">
+<h3 data-number="3.2" class="anchored" data-anchor-id="sortir-une-carte"><span class="header-section-number">3.2</span> <em>2. Sortir une carte</em></h3>
 <div id="18" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="bu">Base</span>.<span class="fu">pop!</span>(paquet<span class="op">::</span><span class="dt">Paquet</span>) </span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pop!</span>(paquet.cartes)</span>
@@ -242,8 +253,8 @@ Cette fonction permet ainsi de mélanger un <em>paquet</em> de carte.<br>
 Cette fonction permet de retirer la dernière carte du <em>paquet</em> et de la stocker.<br>
 &nbsp;</p>
 </section>
-<section id="supprimer-une-carte-à-un-endroit-donné" class="level2">
-<h2 class="anchored" data-anchor-id="supprimer-une-carte-à-un-endroit-donné"><em>3. Supprimer une carte à un endroit donné</em></h2>
+<section id="supprimer-une-carte-à-un-endroit-donné" class="level3" data-number="3.3">
+<h3 data-number="3.3" class="anchored" data-anchor-id="supprimer-une-carte-à-un-endroit-donné"><span class="header-section-number">3.3</span> <em>3. Supprimer une carte à un endroit donné</em></h3>
 <div id="20" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="bu">Base</span>.<span class="fu">splice!</span>(paquet<span class="op">::</span><span class="dt">Paquet</span>, index<span class="op">::</span><span class="dt">Int64</span>)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">splice!</span>(paquet.cartes, index)</span>
@@ -253,8 +264,8 @@ Cette fonction permet de retirer la dernière carte du <em>paquet</em> et de la 
 Cette fonction permet de supprimer la carte à la place <em>index</em> du <em>paquet</em>.<br>
 </p>
 </section>
-<section id="ajouter-une-carte" class="level2">
-<h2 class="anchored" data-anchor-id="ajouter-une-carte"><em>4. Ajouter une carte</em></h2>
+<section id="ajouter-une-carte" class="level3" data-number="3.4">
+<h3 data-number="3.4" class="anchored" data-anchor-id="ajouter-une-carte"><span class="header-section-number">3.4</span> <em>4. Ajouter une carte</em></h3>
 <div id="22" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="bu">Base</span>.<span class="fu">push!</span>(paquet<span class="op">::</span><span class="dt">Paquet</span>, carte<span class="op">::</span><span class="dt">Carte</span>) </span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">push!</span>(paquet.cartes, carte)</span>
@@ -269,14 +280,14 @@ Rajoute une <em>carte</em> à la fin de <em>paquet</em> sélectionné.</p>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>recomp <span class="op">=</span> <span class="fu">push!</span>(pile, tirage)</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Recomposition = "</span>, recomp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Recomposition = 10♦ D♥ As♦ 3♠ 2♥ 6♠ 5♦ V♠ 7♠ 6♥ 10♠ 7♦ 9♦ 7♣ 4♦ 2♠ As♠ 3♣ 4♠ 10♥ V♥ R♥ 2♣ R♠ 4♣ D♠ V♣ 5♣ 9♣ 8♠ 7♥ 8♥ 9♥ V♦ R♦ 4♥ 3♥ 6♦ 10♣ R♣ 8♦ D♣ 2♦ 5♠ As♣ 8♣ As♥ 6♣ 3♦ D♦ 9♠ 5♥ </code></pre>
+<pre><code>Recomposition = 7♦ 7♣ R♠ 10♦ As♠ 6♦ 8♣ 10♥ 4♣ V♣ As♦ D♦ 5♠ D♠ 7♥ 6♥ 5♦ 2♠ 7♠ V♥ V♦ D♣ R♦ As♣ 3♣ 2♦ 2♣ 9♣ R♥ 5♥ 3♥ 10♠ 6♠ R♣ 4♠ D♥ As♥ 9♥ 4♥ 10♣ 3♦ 9♦ 8♥ 2♥ V♠ 8♠ 9♠ 4♦ 5♣ 8♦ 6♣ 3♠ </code></pre>
 </div>
 </div>
 <p>La <em>carte</em> tirée a été remise à la fin de la <em>pile</em> (à la place où elle a été tiré).<br>
 &nbsp;</p>
 </section>
-<section id="créer-les-mains-des-joueurs-en-début-de-partie" class="level2">
-<h2 class="anchored" data-anchor-id="créer-les-mains-des-joueurs-en-début-de-partie"><em>5. Créer les mains des joueurs en début de partie</em></h2>
+<section id="créer-les-mains-des-joueurs-en-début-de-partie" class="level3" data-number="3.5">
+<h3 data-number="3.5" class="anchored" data-anchor-id="créer-les-mains-des-joueurs-en-début-de-partie"><span class="header-section-number">3.5</span> <em>5. Créer les mains des joueurs en début de partie</em></h3>
 <div id="26" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">distribution</span>(paquet<span class="op">::</span><span class="dt">Paquet</span>)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    joueur <span class="op">=</span> <span class="fu">Paquet</span>(Carte[])</span>
@@ -316,16 +327,16 @@ Par exemple<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><s
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>joueur1.cartes[<span class="fl">1</span>]</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Permet d'appeler la première carte du joueur1.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="1">
-<pre><code>5♦</code></pre>
+<pre><code>4♦</code></pre>
 </div>
 </div>
 <p><br>
 </p>
 </section>
-<section id="actions-des-cartes-sur-le-compteur" class="level2">
-<h2 class="anchored" data-anchor-id="actions-des-cartes-sur-le-compteur"><em>5. Actions des cartes sur le compteur</em></h2>
+<section id="actions-des-cartes-sur-le-compteur" class="level3" data-number="3.6">
+<h3 data-number="3.6" class="anchored" data-anchor-id="actions-des-cartes-sur-le-compteur"><span class="header-section-number">3.6</span> <em>6. Actions des cartes sur le compteur</em></h3>
 <div id="32" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">jouer</span>(compteur<span class="op">::</span><span class="dt">Int64</span>, joueur<span class="op">::</span><span class="dt">Paquet</span>,  index<span class="op">::</span><span class="dt">Int64</span>, defausse<span class="op">::</span><span class="dt">Paquet</span>, pioche<span class="op">::</span><span class="dt">Paquet</span>)</span>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">jouer_br</span>(compteur<span class="op">::</span><span class="dt">Int64</span>, joueur<span class="op">::</span><span class="dt">Paquet</span>,  index<span class="op">::</span><span class="dt">Int64</span>, defausse<span class="op">::</span><span class="dt">Paquet</span>, pioche<span class="op">::</span><span class="dt">Paquet</span>)</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    carte <span class="op">=</span> joueur.cartes[index]</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    rg <span class="op">=</span> carte.rang</span>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="fl">1</span> <span class="op">&lt;=</span> rg <span class="op">&lt;=</span> <span class="fl">10</span></span>
@@ -350,7 +361,7 @@ Par exemple<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><s
 <span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
 <span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="1">
-<pre><code>jouer (generic function with 1 method)</code></pre>
+<pre><code>jouer_br (generic function with 1 method)</code></pre>
 </div>
 </div>
 <p>Cette fonction utilise le rang de la <em>carte</em> afin de réaliser une action spécifique.<br>
@@ -360,13 +371,13 @@ Enfin, elle permet aussi de signaler si des gages doivent être distibués ou no
 <br>
 </p>
 </section>
-<section id="lancement-du-jeu" class="level2">
-<h2 class="anchored" data-anchor-id="lancement-du-jeu"><em>6. Lancement du jeu</em></h2>
-<div id="34" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="lancement-du-jeu" class="level3" data-number="3.7">
+<h3 data-number="3.7" class="anchored" data-anchor-id="lancement-du-jeu"><span class="header-section-number">3.7</span> <em>7. Lancement du jeu</em></h3>
+</section>
+</section>
 </div>
-</section>
-</section>
+</div>
+</div>
 
 
 <div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
