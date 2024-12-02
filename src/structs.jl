@@ -12,19 +12,9 @@ function Base.show(io::IO, carte::Carte)
 end
 
 
-# Paquet de 52 cartes complet :
+# Paquet :
 struct Paquet 
     cartes :: Array{Carte, 1} 
-end
-
-function Paquet52() 
-    paquet = Paquet(Carte[])
-    for couleur in 1:4
-        for rang in 1:13
-            push!(paquet.cartes, Carte(rang, couleur))
-        end
-    end
-    paquet
 end
 
 function Base.show(io::IO, paquet::Paquet) 

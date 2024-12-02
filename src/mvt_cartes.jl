@@ -4,6 +4,9 @@ include("prop_compteur.jl")
 import Random
 import JLD
 
+using Random
+using JLD
+
 
 # Mélanger le paquet :
 function Random.shuffle!(paquet::Paquet)

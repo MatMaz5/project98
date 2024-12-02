@@ -1,33 +1,71 @@
 ---
-title : "Rapport - Développement du *98*"
-author : "Matthias MAZET"
-engine : julia
-format : 
+title: "Rapport - Développement du *98*"
+author: "Matthias MAZET"
+engine: julia
+format: 
     html:
-        toc: true
-        toc-title: table des matières
-        number-sections: true
-        theme: minty
+        theme: sketchy
 ---
 
 ::: {.panel-tabset}
 
 
-# Règles du jeu
+# **Règles du jeu**
 
-***But du jeu***
+### ***<span style="color:seagreen;">But du jeu</span>***
+Ne pas atteindre (ou dépasser) 98.
+\
+\
+
+### ***<span style="color:seagreen;">Mise en place</span>***
+Distribuer 5 cartes à chaque joueur et garder le reste pour faire la pioche.
+\
+\
+
+### ***<span style="color:seagreen;">Règles</span>***
+Chaque joueur joue à tour de role une carte de sa main.
+Le premier joueur initialise un "compteur" (= défausse aussi) avec sa 1e carte, en annonçant sa valeur.
+Chacun joue vient ensuite ajouter une carte à tour de role à ce compteur, tout en annonçant la nouvelle valeur du compteur. 
+Ne pas oublier de piocher -> 1 gage sinon.
+Si un joueur se trompe sur la valeur du compteur -> 1 gage.
+Compteur commun -> celui qui compteur => 98 perd.
+Toutes les dizaines -> donner autant de gages que de dizaines (ex : compteur = 30 -> 3 gages à donner).
+\
+\
+
+### ***<span style="color:seagreen;">Effets des cartes</span>***
+* Cartes nombre (de l'As au 10) : ajoute leur valeur au compteur.
+* Valet : changement de tour.
+* Dame : enlève 10 au compteur.
+* Roi : fixe le compteur à 70.
 
 
-***Mise en place***
 
 
-***Règles***
 
 
-# Descprition du code
 
-## *I. Création des cartes*
+# **Description du code**
+
+## *I. Création de structures*
+### *<span style="color:seagreen;">I.A) Structure `Carte`</span>*
 ```{julia}
+#| eval: false
+struct Carte 
+    rang :: Int64
+    couleur :: Int64 
+    function Carte(rang::Int64, couleur::Int64) 
+        @assert(1 ≤ rang ≤ 13, "problème de rang")
+        @assert(1 ≤ couleur ≤ 4, "problème de couleur")
+    new(rang, couleur)
+    end 
+end
+```
+
+Trop compliqué -> simplification :
+
+```{julia}
+#| eval: false
 struct Carte 
     rang :: Int64
     couleur :: Int64 
@@ -37,57 +75,43 @@ end
 Créer une structure de carte renseignée par un couple d'entiers (permet de les comparer).
 \
 
+Esthétique des cartes :
 ```{julia}
+#| eval: false
 rangs = (:As, 2, 3, 4, 5, 6, 7, 8 , 9, 10, :V, :D, :R)
 couleurs = (:♥, :♦, :♠, :♣)
+```
 
+\
+
+```{julia}
+#| eval: false
 function Base.show(io::IO, carte::Carte)
    print(io, rangs[carte.rang], couleurs[carte.couleur])
 end
 ```
-Base.show : fonction show de base (au cas où elle est modifiée ailleurs).  
-io :: IO : multiple dispatching : permet de gérer l'affichage automatiquement.  
-io (dans print) : associer le show et le print.  
-Cette fonction permet d'associer la structure de la carte à sa "vraie" valeur.  
-\  
 
-Test pour visualiser[^1] :
+`Base.show` : pour avoir la fonction `show` du package de base (au cas où elle serait modifiée ailleurs).  
+`io::IO` : multiple dispatching : permet de gérer l'affichage automatiquement.  
+`io` (dans print) : associer le show et le print.  
+Cette fonction permet d'associer la structure de la carte à un format visuel plus commun.
+\
+\
+
+
+### *<span style="color:seagreen;">I.B) Structure `Paquet`</span>*
 ```{julia}
-# Test :
-Carte(12,1)
-typeof(Carte(12,1))
-```
-[^1]: Problème d'affichage sur le pdf.
-
-{{< pagebreak >}}
-
-## *II. Création du paquet de cartes*
-```{julia}
+#| eval: false
 struct Paquet 
     cartes :: Array{Carte, 1} 
 end
 ```
+
 Créer une structure pour le paquet de cartes.  
 \
 
 ```{julia}
-function Paquet52() 
-    paquet = Paquet(Carte[])
-    for couleur in 1:4 
-# Sélectionne la couleur de la carte.
-        for rang in 1:13 
-# Sélectionne le rang de la carte.
-            push!(paquet.cartes, Carte(rang, couleur)) 
-# push! : ajoute le couple carte sélectionné à la liste de cartes du paquet.
-        end
-    end
-    paquet
-end
-```
-Le *paquet* est complet mais s'affiche sous forme d'une liste de *cartes*.  
-\ 
-
-```{julia}
+#| eval: false
 function Base.show(io::IO, paquet::Paquet) 
     for carte in paquet.cartes
         print(io, carte, " ")
@@ -95,115 +119,148 @@ function Base.show(io::IO, paquet::Paquet)
     println()
 end
 ```
+
 Cette fonction permet de créer un affichage pour les *cartes* de la liste stocker dans le *paquet*.  
 Le *paquet* s'affiche donc maintenant comme des *cartes* séparées.
-\ 
+(Cf paragraphe sur la création d'un paquet de 52 cartes pour voir l'affichage).
 
-{{< pagebreak >}}
 
-## *III. Effets sur le paquet*
-### *1. Mélanger le paquet*
+
+\
+\
+\
+\
+
+
+
+## *II. Propriétés liées au compteur*
+### *<span style="color:seagreen;">II.A) Effets de chaque carte</span>*
 ```{julia}
+#| eval: false
+function effet_cartes(compteur::Base.RefValue{Int64}, joueur::Paquet,  index::Int64)
+    carte = joueur.cartes[index]
+    rg = carte.rang
+    if 1 <= rg <= 10
+        compteur[] += rg
+    elseif rg == 11
+        compteur[] += 0
+    elseif rg == 12
+        compteur[] -= 10
+    elseif rg == 13
+        compteur[] = 70
+    end
+end
+```
+
+Description.
+\
+\
+
+
+### *<span style="color:seagreen;">II.A) "Etat" du compteur</span>*
+```{julia}
+#| eval: false
+function etat_compteur(compteur::Base.RefValue{Int64})
+    if compteur[]%10 == 0
+        println(Int(compteur[]/10), " gages à donnés ! ", )
+        println("Compteur = ", compteur[])
+    elseif compteur[] >= 98
+        println("Perdu !")
+    else
+        println("Compteur = ", compteur[])
+    end
+end
+```
+
+Description.
+
+
+
+\
+\
+\
+\
+
+
+
+## *III. Actions des cartes*
+Package necéssaire :
+```{julia}
+#| eval: false
+import Pkg
+
+Pkg.add("Random")
+Pkg.add("JLD")
+
+using Random
+using JLD
+```
+
+
+### *<span style="color:seagreen;">III.A) Mélanger le paquet</span>*
+```{julia}
+#| eval: false
 using Random
 function Random.shuffle!(paquet::Paquet)
     shuffle!(paquet.cartes)
     paquet
 end
 ```
+
 Importe et formate la fonction "shuffle!" pour l'adapter à la structure "Paquet".  
 Cette fonction permet ainsi de mélanger un *paquet* de carte. 
 \
+\
 
-Test pour voir la différence[^1] :
-```{julia}
-paquet = Paquet52()
-pile = shuffle!(Paquet52())
-```
-La *pile* correspond au *paquet* mélangé.
-\ 
 
-### *2. Sortir une carte*
+### *<span style="color:seagreen;">III.B) Tirer une carte</span>*
 ```{julia}
+#| eval: false
 function Base.pop!(paquet::Paquet) 
     pop!(paquet.cartes)
 end
 ```
+
 Importe et formate la fonction "pop!" pour l'adapter à la structure "Paquet".  
 Cette fonction permet de retirer la dernière carte du *paquet* et de la stocker.  
 \ 
+\
+\
 
-### *3. Supprimer une carte à un endroit donné*
+
+### *<span style="color:seagreen;">III.C) Supprimer une carte à un endroit donné</span>*
 ```{julia}
+#| eval: false
 function Base.splice!(paquet::Paquet, index::Int64)
     splice!(paquet.cartes, index)
 end
 ```
+
 Importe et formate la fonction "splice!" pour l'adapter à la structure "Paquet".  
-Cette fonction permet de supprimer la carte à la place *index* du *paquet*.
+Cette fonction permet de supprimer la carte à la place *index* d'un *paquet*.
+\
 \
 
-### *4. Ajouter une carte*
+
+### *<span style="color:seagreen;">III.D) Ajouter une carte</span>*
 ```{julia}
+#| eval: false
 function Base.push!(paquet::Paquet, carte::Carte) 
     push!(paquet.cartes, carte)
     paquet 
 end
 ```
+
 Importe et formate la fonction "push!" pour l'adapter aux structures "Paquet" et "Carte".  
-Rajoute une *carte* à la fin de *paquet* sélectionné.
-
-Exemple[^1] :
-```{julia}
-tirage = pop!(pile)
-recomp = push!(pile, tirage)
-print("Recomposition = ", recomp)
-```
-La *carte* tirée a été remise à la fin de la *pile* (à la place où elle a été tiré).  
-\ 
-
-
-### *5. Créer les mains des joueurs en début de partie*
-```{julia}
-function distribution(paquet::Paquet)
-    joueur = Paquet(Carte[])
-    for i in 1:5
-        joueur = push!(joueur, pop!(paquet))
-    end
-    joueur
-end
-```
-La fonction transfert 5 cartes d'un *paquet* à un *joueur* (qui a une structure "Paquet") et retourne la main du joueur. A la fin de la fonction, les 5 dernières cartes du *paquet* n'apparaissent donc plus dans celui-ci (puisqu'elles sont dans la main du joueur).
-Le reste du *paquet* peut alors servir de pioche.  
-\ 
-
-Exemple[^1] :
-```{julia}
-paquet = shuffle!(Paquet52())
-length(paquet.cartes)
-joueur1 = Paquet(Carte[])
-joueur2 = Paquet(Carte[])
-joueur3 = Paquet(Carte[])
-joueur4 = Paquet(Carte[])
-joueur1 = distribution(paquet)
-joueur2 = distribution(paquet)
-joueur3 = distribution(paquet)
-joueur4 = distribution(paquet)
-length(paquet.cartes)
-```
-Les *joueurs* sont créés au préalable afin d'obtenir des *paquets* vides et de pouvoir ainsi les remplir de *cartes*.
-Grâce à la fonction "length", on constate bien que le *paquet* initiale a perdu $20 = 4*5$ *cartes*.  
+Rajoute une *carte* à la fin du *paquet* sélectionné.
 \
-Pour appeler la i-ème *carte* d'un *paquet*, on utilise l'instruction "paquet.cartes[i]".  
-Par exemple[^1] : 
-```{julia}
-joueur1.cartes[1]
-# Permet d'appeler la première carte du joueur1.
-```
 \
 
 
-### *6. Actions des cartes sur le compteur*
+### *<span style="color:seagreen;">III.E) Jouer une carte</span>*
+1e idée :
 ```{julia}
+#| eval: false
 function jouer_br(compteur::Int64, joueur::Paquet,  index::Int64, defausse::Paquet, pioche::Paquet)
     carte = joueur.cartes[index]
     rg = carte.rang
@@ -229,15 +286,321 @@ function jouer_br(compteur::Int64, joueur::Paquet,  index::Int64, defausse::Paqu
     end
 end
 ```
+
 Cette fonction utilise le rang de la *carte* afin de réaliser une action spécifique. \
 Par exemple, un roi, donc une carte de *rang* 13, fiwe le compteur à 70. \
 La fonction permet aussi de détecter si la partie doit s'arrêter ou non (i.e. le compteur dépasse 98). \
 Enfin, elle permet aussi de signaler si des gages doivent être distibués ou non (i.e. si le compteur est un multiple de 10). \
+/--> Fonction trop longue/complexe : c'est pour ça qu'on l'a séparée en plusieurs et recompiler dans une autre : `effet_cartes(compteur, joueur, index)` et `etat_compteur(compteur)` qu'on vient greffer dans une fonction `jouer(compteur, joueur, index, defausse, pioche)` plus simple :
+```{julia}
+#| eval: false
+function jouer(compteur::Base.RefValue{Int64}, joueur::Paquet, index::Int64, defausse::Paquet, pioche::Paquet)
+    effet_cartes(compteur, joueur, index)
+    splice!(joueur, index)
+    push!(joueur, pop!(pioche))
+    push!(defausse.cartes, joueur.cartes[index])
+    etat_compteur(compteur)
+end
+```
+
+Description.
+
+
+
+\
+\
+\
 \
 
 
-### *7. Lancement du jeu*
 
+## *IV. Tests anti-erreurs*
+### *<span style="color:seagreen;">IV.A) Contrôle du joueur</span>*
+```{julia}
+#| eval: false
+function bon_joueur()
+    press = readline()
+    while press != "O"
+        println("Essayez de nouveau.")
+        press = readline()
+    end
+end
+```
+
+Description.
+\
+\
+
+
+### *<span style="color:seagreen;">IV.B) Contrôle des valeurs demandées</span>*
+```{julia}
+#| eval: false
+function nombre()
+    try
+        nb = parse(Int64,readline())
+        nb
+    catch
+        @warn "La valeur entrée n'est pas un nombre. Réessayez."
+        nombre()
+    end
+end
+```
+
+Description.
+
+
+
+\
+\
+\
+\
+
+
+
+## *V. Mise en place*
+### *<span style="color:seagreen;">V.A) Création d'un paquet de 52 cartes</span>*
+```{julia}
+#| eval: false
+function Paquet52() 
+    paquet = Paquet(Carte[])
+    for couleur in 1:4
+        for rang in 1:13
+            push!(paquet.cartes, Carte(rang, couleur))
+        end
+    end
+    paquet
+end
+```
+
+Description.
+\
+\
+
+
+### *<span style="color:seagreen;">V.B) Création des mains des joueurs</span>*
+```{julia}
+#| eval: false
+function main_jr(paquet::Paquet)
+    joueur = Paquet(Carte[])
+    for i in 1:5
+        joueur = push!(joueur, pop!(paquet))
+    end
+    joueur
+end
+```
+
+La fonction transfert 5 cartes d'un *paquet* à un *joueur* (qui a une structure "Paquet") et retourne la main du joueur. A la fin de la fonction, les 5 dernières cartes du *paquet* n'apparaissent donc plus dans celui-ci (puisqu'elles sont dans la main du joueur).
+Le reste du *paquet* peut alors servir de pioche. 
+Description.
+\
+\
+
+
+### *<span style="color:seagreen;">V.C) Mise en place du jeu "98"</span>*
+
+Idée de base  : faire une `struct` pour le jeu :\
+```{julia}
+#| eval: false
+
+```
+
+Pb : le nb de joueur est fixe -> `struct` = mauvaise idée.\
+
+Pour avoir un nb de joueur variable, il vaut mieux construire un `dict` :
+`Jeu_98 = Dict([("pioche", shuffle!(Paquet52())), ("defausse", Paquet(Carte[])), ("compteur", Ref(0)), (i, main_jr(Jeu_98["pioche"]))])`
+
+i = nb de joueur à créer.\
+Ref(0) -> pour que le compteur soit un entier "évolutif".\
+
+Ainsi :
+```{julia}
+#| eval: false
+function mise_en_place(nb_jr)
+    Jeu_98 = Dict()
+    Jeu_98["pioche"] = shuffle!(Paquet52())
+    Jeu_98["defausse"] = Paquet(Carte[])
+    Jeu_98["compteur"] = Ref(0)
+    if 2 <= nb_jr <= 5
+        for i in 1:nb_jr
+            Jeu_98[i] = main_jr(Jeu_98["pioche"])
+        end
+        println("Nombre de joueurs correct. Lancement du jeu.")
+        println("(Si vous ne savez plus l'effet de vos cartes au moment de jouer, entrez '0' comme indice de carte pour afficher l'aide.)")
+    else
+        println("Nombre de joueurs incorrect. Veuillez changez.")
+        nb_jr = nombre()
+    end
+    Jeu_98
+end
+```
+
+Description.
+
+
+
+\
+\
+\
+\
+
+
+
+## *VI. Lancement*
+```{julia}
+#| eval: false
+function partie98()
+    println("Mise en place du jeu : combien de joueurs ?")
+    nb_jr = nombre()
+    Jeu_98 = mise_en_place(nb_jr)
+    while Jeu_98["compteur"][] < 98
+        for i in 1:nb_jr
+            println("Joueur ", i, " joue ? Taper O si oui.")
+            bon_joueur()
+            println("Quelle carte voulez-vous jouer ? Entrer son emplacement (1 à 5).")
+            println(Jeu_98[i])
+            index = nombre()
+            
+            if index == 0
+                println("Les cartes nombres ajoute leur valeur au compteur.")
+                println("Le valet ne modifie pas le compteur.")
+                println("La dame enlève 10 au compteur.") 
+                println("Le roi fixe le compteur à 70.")
+                index = nombre()
+            end
+
+            while index < 1 || index > 5
+                println("Pas de carte correspondante. Sélectionner un autre nombre.")
+                index = nombre()
+            end
+
+            print("\e[2J")
+            jouer(Jeu_98["compteur"], Jeu_98[i], index, Jeu_98["defausse"], Jeu_98["pioche"])
+            if Jeu_98["compteur"][] >= 98 break end
+
+            if Jeu_98["pioche"] == ""
+                Jeu_98["pioche"] = shuffle!(Jeu_98["defausse"])
+                Jeu_98["defausse"] = Paquet(Carte[])   
+            end
+            
+        end
+    end
+    println("Fin du jeu.")
+end
+```
+
+Description.
+
+
+
+
+
+
+
+# **Visulation des fonctions codées**
+
+***Attention : enlever les "#| eval: false".***
+
+
+```{julia}
+#| eval: false
+include("src/lancement.jl")
+```
+
+
+Test pour visualiser les cartes :
+```{julia}
+#| eval: false
+# Test :
+Carte(12,1)
+```
+
+\
+\
+
+
+Test pour voir la différence entre paquet et paquet mélangé :
+```{julia}
+#| eval: false
+paquet = Paquet52()
+pile = shuffle!(Paquet52())
+```
+
+La *pile* correspond au *paquet* mélangé.
+\ 
+\
+
+
+Visualisation d'un tirage et de la remise d'une carte :
+```{julia}
+#| eval: false
+tirage = pop!(pile)
+recomp = push!(pile, tirage)
+print("Recomposition = ", recomp)
+```
+
+La *carte* tirée a été remise à la fin de la *pile* (à la place où elle a été tiré).  
+\  
+\ 
+
+
+Création de main de joueurs :
+```{julia}
+#| eval: false
+paquet = shuffle!(Paquet52())
+length(paquet.cartes)
+joueur1 = Paquet(Carte[])
+joueur2 = Paquet(Carte[])
+joueur3 = Paquet(Carte[])
+joueur4 = Paquet(Carte[])
+joueur1 = main_jr(paquet)
+joueur2 = main_jr(paquet)
+joueur3 = main_jr(paquet)
+joueur4 = main_jr(paquet)
+length(paquet.cartes)
+```
+
+Les *joueurs* sont créés au préalable afin d'obtenir des *paquets* vides et de pouvoir ainsi les remplir de *cartes* (automatiser dans une fonction par la suite).\
+Grâce à la fonction "length", on constate bien que le *paquet* initiale a perdu $20 = 4*5$ *cartes*.  
+\
+
+Pour appeler la i-ème *carte* d'un *paquet*, on utilise l'instruction "paquet.cartes[i]". \
+Par exemple : 
+```{julia}
+#| eval: false
+joueur1.cartes[1]
+```
+
+Permet d'appeler la première carte du joueur1.
+\
+\
+
+
+D'autre boutons à faire ???
+
+
+
+
+
+
+
+
+# **À propos du package**
+Un package Julia permettant de lancer une version du "98" dans un terminal est accessible en téléchargeant le package *<span style="color:cadetblue;">https://github.com/MatMaz5/Jeu98term.jl</span>*. \
+Les ressources de ce package sont disponible [<span style="color:blue;">ici</span>](https://github.com/MatMaz5/Jeu98term.jl).
+
+Attention : v1.11 de Julia nécessaire.
+
+Décrire comment jouer avec ce package (assez intuitif) :
+
+* chaque joueur joue chacun son tour sur le même écran.
+* Répéte les msgs qui s'affichent lors du lancement du jeu (msg d'aide par ex) ;
+
+
+Règles changées :
+
+* pioche automatique ;
+* compteur automatique ;
+* effet du valet : passer directement au joueur suivant (ajoute 0 au compteur) ;
 
 
 :::

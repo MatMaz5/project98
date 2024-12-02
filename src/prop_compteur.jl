@@ -27,5 +27,4 @@ function etat_compteur(compteur::Base.RefValue{Int64})
     else
         println("Compteur = ", compteur[])
     end
-
 end
